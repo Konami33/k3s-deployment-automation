@@ -72,7 +72,7 @@ master_node = aws.ec2.Instance("master-node",
     key_name="MyKeyPair",
     vpc_security_group_ids=[security_group.id],
     tags={
-        "Name": "master-node"
+        "Name": "Master-node"
     })
 
 
@@ -83,7 +83,7 @@ worker_node_1 = aws.ec2.Instance("worker-node-1",
     key_name="MyKeyPair",
     vpc_security_group_ids=[security_group.id],
     tags={
-        "Name": "worker-node-1"
+        "Name": "Worker-node-1"
     })
 
 worker_node_2 = aws.ec2.Instance("worker-node-2",
@@ -93,7 +93,7 @@ worker_node_2 = aws.ec2.Instance("worker-node-2",
     key_name="MyKeyPair",
     vpc_security_group_ids=[security_group.id],
     tags={
-        "Name": "worker-node-2"
+        "Name": "Worker-node-2"
     })
 
 # Export outputs
