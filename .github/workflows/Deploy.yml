@@ -1,0 +1,73 @@
+name: Deploy k3s
+
+on:
+  workflow_run:
+    workflows: ["Deploy Infrastructure"]
+    types:
+      - completed
+
+jobs:
+  deploy-k3s:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Pulumi login
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        run: pulumi login
+
+      - name: Pulumi stack select
+        run: pulumi stack select dev
+
+      - name: Pulumi refresh
+        run: pulumi refresh --yes
+      
+      - name: Save Pulumi outputs
+        id: pulumi_outputs
+        run: |
+          MASTER_IP=$(pulumi stack output master_public_ip)
+          WORKER1_IP=$(pulumi stack output worker1_public_ip)
+          WORKER2_IP=$(pulumi stack output worker2_public_ip)
+
+          echo "MASTER_IP=$MASTER_IP" >> $GITHUB_ENV
+          echo "WORKER1_IP=$WORKER1_IP" >> $GITHUB_ENV
+          echo "WORKER2_IP=$WORKER2_IP" >> $GITHUB_ENV
+
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Test SSH connection
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.MASTER_IP }} "echo Connected"
+
+      - name: Deploy k3s master node
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ env.MASTER_IP }} "curl -sfL https://get.k3s.io | sh -"
+
+      - name: Deploy k3s worker node 1
+        run: |
+          MASTER_IP=${{ env.MASTER_IP }}
+          WORKER1_IP=${{ env.WORKER1_IP }}
+          NODE_TOKEN=$(ssh -o StrictHostKeyChecking=no ubuntu@$MASTER_IP "sudo cat /var/lib/rancher/k3s/server/node-token")
+          ssh -o StrictHostKeyChecking=no ubuntu@$WORKER1_IP "curl -sfL https://get.k3s.io | K3S_URL=https://$MASTER_IP:6443 K3S_TOKEN=$NODE_TOKEN sh -"
+
+      - name: Deploy k3s worker node 2
+        run: |
+          MASTER_IP=${{ env.MASTER_IP }}
+          WORKER2_IP=${{ env.WORKER2_IP }}
+          NODE_TOKEN=$(ssh -o StrictHostKeyChecking=no ubuntu@$MASTER_IP "sudo cat /var/lib/rancher/k3s/server/node-token")
+          ssh -o StrictHostKeyChecking=no ubuntu@$WORKER2_IP "curl -sfL https://get.k3s.io | K3S_URL=https://$MASTER_IP:6443 K3S_TOKEN=$NODE_TOKEN sh -"
