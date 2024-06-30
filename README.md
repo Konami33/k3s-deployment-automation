@@ -394,8 +394,14 @@ git push -u origin main
    ![workflow](https://github.com/Konami33/k3s-deployment-automation/raw/main/images/logs.png)
 
 1. **Verify K3s Deployment**
+  - Enter into the Master Node ec2 instance and run this command to check if k3s is active
 
-   - After deployment, verify the K3s cluster status using `kubectl` commands:
+```sh
+sudo systemctl status k3s
+```
+  ![](./images/status.png)
+
+  - After deployment, verify the K3s cluster status using `kubectl` commands:
 
 ```bash
   kubectl get nodes
