@@ -1,5 +1,13 @@
 import pulumi
 import pulumi_aws as aws
+import os
+
+public_key = os.getenv("PUBLIC_KEY")
+
+# Create the EC2 KeyPair using the public key
+key_pair = aws.ec2.KeyPair("my-key-pair",
+    key_name="my-key-pair",
+    public_key=public_key)
 
 # Define the VPC and subnet configurations
 vpc = aws.ec2.Vpc("my-vpc",
@@ -69,7 +77,7 @@ master_node = aws.ec2.Instance("master-node",
     instance_type=instance_type,
     ami=ami_id,
     subnet_id=public_subnet.id,
-    key_name="MyKeyPair",
+    key_name=key_pair.key_name,
     vpc_security_group_ids=[security_group.id],
     tags={
         "Name": "Master-node"
@@ -80,7 +88,7 @@ worker_node_1 = aws.ec2.Instance("worker-node-1",
     instance_type=instance_type,
     ami=ami_id,
     subnet_id=public_subnet.id,
-    key_name="MyKeyPair",
+    key_name=key_pair.key_name,
     vpc_security_group_ids=[security_group.id],
     tags={
         "Name": "Worker-node-1"
@@ -90,7 +98,7 @@ worker_node_2 = aws.ec2.Instance("worker-node-2",
     instance_type=instance_type,
     ami=ami_id,
     subnet_id=public_subnet.id,
-    key_name="MyKeyPair",
+    key_name=key_pair.key_name,
     vpc_security_group_ids=[security_group.id],
     tags={
         "Name": "Worker-node-2"
