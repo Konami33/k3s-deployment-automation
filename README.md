@@ -4,7 +4,7 @@
 
 This guide outlines the steps to automate the deployment of a K3s cluster on AWS using Pulumi for infrastructure provisioning and GitHub Actions for continuous deployment. By automating this process, we can ensure consistent and reliable deployments of Kubernetes clusters on AWS instances.
 
-![](./images/image.png)
+![](https://github.com/Konami33/k3s-deployment-automation/raw/main/images/image.png)
 
 ### Prerequisites
 
@@ -221,7 +221,7 @@ cd ~/.ssh
 
   - `AWS_SECRET_ACCESS_KEY` -> `AWS secret key`
 
-  ![Github secret](./images/Screenshot%202024-06-30%20133056.png)
+  ![Github secret](https://github.com/Konami33/k3s-deployment-automation/raw/main/images/Screenshot%202024-06-30%20133056.png)
 
 ## Configure GitHub Actions for Infrastructure Deployment
 
@@ -391,7 +391,7 @@ git push -u origin main
    - Monitor the GitHub Actions dashboard for workflow runs (`infra.yml` and `k3s-deploy.yml`).
    - Review logs and outputs to troubleshoot any deployment issues.
 
-   ![workflow](./images/logs.png)
+   ![workflow](https://github.com/Konami33/k3s-deployment-automation/raw/main/images/logs.png)
 
 1. **Verify K3s Deployment**
 
@@ -439,7 +439,7 @@ kubectl get nodes
 
 This should resolve the `permission denied error` and allow you to use kubectl to interact with your Kubernetes cluster.
 
-![get nodes](./images/Screenshot%202024-06-30%20144023.png)
+![get nodes](https://github.com/Konami33/k3s-deployment-automation/raw/main/images/Screenshot%202024-06-30%20144023.png)
 
 ---
 
