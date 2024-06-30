@@ -4,7 +4,7 @@
 
 This guide outlines the steps to automate the deployment of a K3s cluster on AWS using Pulumi for infrastructure provisioning and GitHub Actions for continuous deployment. By automating this process, we can ensure consistent and reliable deployments of Kubernetes clusters on AWS instances.
 
-![](https://github.com/Konami33/k3s-deployment-automation/raw/main/images/image.png)
+![](https://github.com/Konami33/k3s-deployment-automation/blob/main/images/archi.png?raw=true)
 
 ### Prerequisites
 
@@ -221,7 +221,9 @@ cd ~/.ssh
 
   - `AWS_SECRET_ACCESS_KEY` -> `AWS secret key`
 
-  ![Github secret](https://github.com/Konami33/k3s-deployment-automation/raw/main/images/Screenshot%202024-06-30%20133056.png)
+  - `PULUMI_ACCESS_TOKEN` -> `Pulumi access key`
+
+  ![Github secret](https://github.com/Konami33/k3s-deployment-automation/blob/main/images/secrets.png?raw=true)
 
 ## Configure GitHub Actions for Infrastructure Deployment
 
@@ -399,7 +401,7 @@ git push -u origin main
 ```sh
 sudo systemctl status k3s
 ```
-  ![](./images/status.png)
+  ![](https://github.com/Konami33/k3s-deployment-automation/blob/main/images/status.png?raw=true)
 
   - After deployment, verify the K3s cluster status using `kubectl` commands:
 
